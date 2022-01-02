@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "qig/version"
+require_relative 'qig/version'
 
 module Qig
   class Error < StandardError; end
