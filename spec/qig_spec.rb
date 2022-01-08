@@ -6,7 +6,7 @@ RSpec.describe Qig do
   end
 
   describe '#qig', :aggregate_failures do
-    it 'handles trivial caess' do
+    it 'handles trivial cases' do
       expect(Qig.qig({})).to eq({})
       expect(Qig.qig([])).to eq([])
     end
