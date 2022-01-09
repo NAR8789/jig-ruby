@@ -23,8 +23,10 @@ RSpec.describe Qig do
       expect(Qig.qig([1, 2], 1)).to eq(2)
       expect(Qig.qig([1, 2], 2)).to eq(nil)
       expect(Qig.qig([1, 2], 2, 0)).to eq(nil)
+      expect(Qig.qig([[1, 2], [3, 4]], 0)).to eq([1, 2])
 
-      # this last example is interesting... what if we want to 
+      # this last example is interesting... what if we want to grab the 0th element of each subarray instead?
+      # For that, we turn to []
     end
 
     describe '[]' do
@@ -36,42 +38,45 @@ RSpec.describe Qig do
         expect(Qig.qig([[1, 2], [3, 4]], [], 2, 0)).to eq([nil, nil])
       end
 
-      it 'unboxes top level collections' do
-        expect(Qig.collection_qig([[1, 2], [3, 4]], [])).to eq([1, 2, 3, 4])
+      it 'treats further levels of [] as unboxing' do
+        expect(Qig.qig([1, [2], [3, [4]]], [], [])).to eq([1, 2, 3, [4]])
+        expect(Qig.qig([1, [2], [3, [4]]], [], [], [])).to eq([1, 2, 3, 4])
       end
 
-      it 'preserves atoms' do
-        expect(Qig.collection_qig([1, 2], [])).to eq([1, 2])
-        expect(Qig.collection_qig([[1, 2], 3, [4, 5]], [])).to eq([1, 2, 3, 4, 5])
+      # Why the difference here between the first and second appliations of []?
+      #
+      # Conceptually, let's think of [] as always performing unboxing.
+      # The difference in the first case is Qig needs a way to _return_ the unboxed results.
+      #
+      # That is to say, if the first level were just unboxing, we'd get...
+      #
+      #     expect(Qig.qig([1,2,3])).to eq 1,2,3
+      #
+      # Which is nonsensical, because this isn't perl. To return multiple values we need a container.
+      # Qig needs to _rebox_ the results to return them.
+      #
+      # ergo...
+
+      it 'treats the first level of [] as unboxing then reboxing' do
+        expect(Qig.qig([1, 2, 3], [])).to eq([1,2,3])
       end
-      
-      # But there's some ambiguity here: shouldn't the outer enclosing 
-      # 
 
-      it 'treats the second level of [] as flattening' do
-        # in jq, [] unboxes top-level arrays
+      # Which looks like a no-op, but for later steps Qig will be operating one level down
 
-        expect(Qig.collection_qig([[1, 2], [3, 4]], [])).to eq([1, 2, 3, 4])
+      it 'is meaningfully different from a no-op' do
+        # these look the same on the surface...
 
-        # but in qig, this conflicts conceptually with the simple array handling
-        #
-        # Should Qig.qig([[1, 2], [3, 4]], []) operate on the outermost array, or on the inner arrays?
-        # - In jq, this would operate at the top-level:
-        #   unwrap the top-level array and add its elements to the stream, producing [1, 2] [3, 4]
-        # - This is consistent with jq's indexing behavior in the simple array case:
+        expect(Qig.qig([[1, 2], [3, 4]])).to eq([[1, 2], [3, 4]])
+        expect(Qig.qig([[1, 2], [3, 4]], [])).to eq([[1, 2], [3, 4]])
 
+        # but the difference is apparent one step further in
 
-        #
-        # We can emulate a stream by wrapping the results in an array:
-        
-        expect(Qig.qig [[1, 2], [3, 4]]).to eq([[1, 2], [3, 4]])
-
-        # but isn't this just the input?
-        #
-        # Yes, but Qig's internal state has changed. Since the outer array is now the "stream", 
-
-        expect(Qig.qig([[1, 2], [3, 4]], [], [])).to eq([1, 2, 3, 4])
+        expect(Qig.qig([[1, 2], [3, 4]], 0)).to eq([1, 2])
+        expect(Qig.qig([[1, 2], [3, 4]], [], 0)).to eq([1, 3])
       end
+
+      # More abstractly, this comes down to bridging a fundamental divide between `dig` and `jq`
+
 
       # [] is conceptually simple: it unboxes collections and dumps their contents into jq's stream.
       # It's very simlar to a flatten, except jq will raise an exception if we try to unbox an atom.
