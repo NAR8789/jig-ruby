@@ -2,6 +2,7 @@
 
 RSpec.describe Qig, :aggregate_failures do
   # Qig combines the powers of dig and jq. Or, it's dig with a jq-like twist.
+  # Qig is like dig, but with jq's `[]` operator.
   # That is to say...
   
   context 'it behaves like dig' do
