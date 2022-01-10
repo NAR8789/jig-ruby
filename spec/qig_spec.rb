@@ -77,6 +77,37 @@ RSpec.describe Qig do
 
       # More abstractly, this comes down to bridging a fundamental divide between `dig` and `jq`
 
+      it 'experimental examples' do
+        array_pyramid = [[[[], []], []], []]
+        expect(Qig.qig(array_pyramid)).to                         eq([[[[], []], []], []])
+        expect(Qig.qig(array_pyramid, [])).to                     eq([[[[], []], []], []])
+        expect(Qig.qig(array_pyramid, [], [])).to                 eq( [[[], []], []])
+        expect(Qig.qig(array_pyramid, [], [], [])).to             eq(  [[], []])
+        expect(Qig.qig(array_pyramid, [], [], [], [])).to         eq(   [])
+        expect(Qig.qig(array_pyramid, [], [], [], [], [])).to     eq(   [])
+        expect(Qig.qig(array_pyramid, [], [], [], [], [], [])).to eq(   [])
+
+        expect(Qig.qig(array_pyramid, 0)).to                 eq( [[[], []], []])
+        expect(Qig.qig(array_pyramid, [], 0)).to             eq([[[], []],       nil])
+        expect(Qig.qig(array_pyramid, [], [], 0)).to         eq([[],             nil])
+        expect(Qig.qig(array_pyramid, [], [], [], 0)).to     eq([nil,            nil])
+        expect(Qig.qig(array_pyramid, [], [], [], [], 0)).to eq([                   ])
+
+        pyramid = [0, [1, [2, [3]]]]
+        expect(Qig.qig(pyramid                )).to eq([0, [1, [2, [3]]]])
+        expect(Qig.qig(pyramid, []            )).to eq([0, [1, [2, [3]]]])
+        expect(Qig.qig(pyramid, [], []        )).to eq([0,  1, [2, [3]]] )
+        expect(Qig.qig(pyramid, [], [], []    )).to eq([0,  1,  2, [3]]  )
+        expect(Qig.qig(pyramid, [], [], [], [])).to eq([0,  1,  2,  3]   )
+        expect(Qig.qig(pyramid, [], [], [], [])).to eq([0,  1,  2,  3]   )
+
+        eight = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]
+        expect(Qig.qig(eight, 0)).to          eq([[1, 2], [3, 4]])
+        expect(Qig.qig(eight, [], 0)).to      eq([[1, 2], [5, 6]])
+        expect(Qig.qig(eight, [], [], 0)).to  eq([1, 3, 5, 7])
+        expect(Qig.qig(eight, [], [], [])).to eq([1, 2, 3, 4, 5, 6, 7, 8])
+      end
+
 
       # [] is conceptually simple: it unboxes collections and dumps their contents into jq's stream.
       # It's very simlar to a flatten, except jq will raise an exception if we try to unbox an atom.
@@ -94,14 +125,6 @@ RSpec.describe Qig do
       # - initial input is treated as a unit (or a stream of one), and it tries to return a unit
       # - if we try to _unbox_ the initial unit, Qig drops down a level, treating that top-level collection as the stream.
 
-    end
-
-    context 'when I [] something that is not an array'
-      it 'preserves the item (like flatten)' do
-
-      end
-
-      xit 'throws an error (like jq)'
     end
   end
 end
