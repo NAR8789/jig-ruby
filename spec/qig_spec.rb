@@ -67,6 +67,10 @@ RSpec.describe Qig, :aggregate_failures do
     # Qig follows simple rules to determine context:
     # - qig always starts in unit-context (always start off assuming the input is an atomic subject)
     # - qig switches to collection-context upon [] (read: "unboxing" or "splatting").
+    #
+    # This strives for good balance between flexibility and usability:
+    # - unit-context retains the intuitive feel of dig-like usage
+    # - switching to collection-context is short, explicit, and sticks to jq semantics.
 
     context 'qig always starts in unit context' do
       it 'treats initial input as a unit, even when that input is an array'
