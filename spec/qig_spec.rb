@@ -34,6 +34,19 @@ RSpec.describe Qig, :aggregate_failures do
     end
   end
 
+  context 'miscellaneous extensions to dig' do
+    it 'handles trivial cases' do
+      expect(Qig.qig({})).to eq({})
+      expect(Qig.qig([])).to eq([])
+      # more specifically, this is jq-like. dig gripes at you if you don't give it a path
+    end
+
+    it 'handles digging on nil' do
+      expect(Qig.qig(nil, 1, 2 ,3)).to eq(nil)
+      # dig is not defined on nil
+    end
+  end
+
   context 'unit-context vs collection-context' do
     # When working with qig, it's useful to bring in a concept of "unit-context" vs "collection-context".
     # That is: whether qig treats the input to each navigation step as a unit, or as a collection.
@@ -101,11 +114,6 @@ RSpec.describe Qig, :aggregate_failures do
     # a collection. This has two downsides:
     # 1. It makes the dig-like usages less ergonomic (though arguably callers could just switch to dig in those cases)
     # 2. It likely eliminates the ability to dig into top-level arrays, since we'd probably assume these are top-level.
-  end
-
-  it 'handles trivial cases' do
-    expect(Qig.qig({})).to eq({})
-    expect(Qig.qig([])).to eq([])
   end
 
 
