@@ -80,6 +80,9 @@ RSpec.describe Qig, :aggregate_failures do
       # this can produce some counterintuitive results
 
       specify 'first [] looks like a no-op'
+      # I unboxed the input, but I had to rebox it to give you the results
+      # Rather than just any old box, I reused the box it came in. (enclosing collection matches
+      # the original)
       
       specify 'multi-navigation always requires a leading []'
 
