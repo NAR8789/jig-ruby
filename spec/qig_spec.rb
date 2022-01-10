@@ -41,9 +41,9 @@ RSpec.describe Qig, :aggregate_failures do
       # more specifically, this is jq-like. dig gripes at you if you don't give it a path
     end
 
-    it 'handles digging on nil' do
+    it 'safely navigates top-level nil' do
       expect(Qig.qig(nil, 1, 2 ,3)).to eq(nil)
-      # dig is not defined on nil
+      # dig safely navigates embedded nils but is not defined on nil for top-level nav
     end
   end
 
