@@ -6,8 +6,17 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Run the default task
+          name: Install dependencies
           command: |
             gem install bundler -v 2.3.4
             bundle install
-            bundle exec rake
+      - run:
+          name: Rspec
+          command: |
+            bundle exec rspec --format doc --format RspecJunitFormatter -o spec/reports/rspec.xml
+      - run:
+          name: Rubocop
+          command: |
+            bundle exec rubocop --format progress --format junit --out spec/reports/rubocop.xml
+      - store_test_results:
+          path: spec/reports/
