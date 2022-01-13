@@ -4,15 +4,15 @@ RSpec.describe Qig, :aggregate_failures do
   # Qig combines the powers of dig and jq. Or, it's dig with a jq-like twist.
   # Qig is like dig, but with jq's `[]` operator.
   # That is to say...
-  
+
   context 'it behaves like dig' do
     it 'handles dig documentation examples' # TODO: rephrase this
 
     it 'handles simple hash cases' do
-      expect(Qig.qig({a: 1, b: 2}, :a)).to eq(1)
-      expect(Qig.qig({a: 1, b: 2}, :b)).to eq(2)
-      expect(Qig.qig({a: 1, b: 2}, :c)).to eq(nil)
-      expect(Qig.qig({a: 1, b: 2}, :c, :d)).to eq(nil)
+      expect(Qig.qig({ a: 1, b: 2 }, :a)).to eq(1)
+      expect(Qig.qig({ a: 1, b: 2 }, :b)).to eq(2)
+      expect(Qig.qig({ a: 1, b: 2 }, :c)).to eq(nil)
+      expect(Qig.qig({ a: 1, b: 2 }, :c, :d)).to eq(nil)
     end
 
     it 'handles simple array cases' do
@@ -71,25 +71,25 @@ RSpec.describe Qig, :aggregate_failures do
         array_pyramid = [[[[], []], []], []]
         expect(Qig.qig(array_pyramid)).to                         eq([[[[], []], []], []])
         expect(Qig.qig(array_pyramid, [])).to                     eq([[[[], []], []], []])
-        expect(Qig.qig(array_pyramid, [], [])).to                 eq( [[[], []], []])
-        expect(Qig.qig(array_pyramid, [], [], [])).to             eq(  [[], []])
-        expect(Qig.qig(array_pyramid, [], [], [], [])).to         eq(   [])
-        expect(Qig.qig(array_pyramid, [], [], [], [], [])).to     eq(   [])
-        expect(Qig.qig(array_pyramid, [], [], [], [], [], [])).to eq(   [])
+        expect(Qig.qig(array_pyramid, [], [])).to                 eq( [[[], []], []])      # rubocop:disable Layout/SpaceInsideParens
+        expect(Qig.qig(array_pyramid, [], [], [])).to             eq(  [[], []])           # rubocop:disable Layout/SpaceInsideParens
+        expect(Qig.qig(array_pyramid, [], [], [], [])).to         eq(   [])                # rubocop:disable Layout/SpaceInsideParens
+        expect(Qig.qig(array_pyramid, [], [], [], [], [])).to     eq(   [])                # rubocop:disable Layout/SpaceInsideParens
+        expect(Qig.qig(array_pyramid, [], [], [], [], [], [])).to eq(   [])                # rubocop:disable Layout/SpaceInsideParens
 
-        expect(Qig.qig(array_pyramid, 0)).to                 eq( [[[], []], []])
+        expect(Qig.qig(array_pyramid, 0)).to                 eq( [[[], []], []])           # rubocop:disable Layout/SpaceInsideParens
         expect(Qig.qig(array_pyramid, [], 0)).to             eq([[[], []],       nil])
         expect(Qig.qig(array_pyramid, [], [], 0)).to         eq([[],             nil])
         expect(Qig.qig(array_pyramid, [], [], [], 0)).to     eq([nil,            nil])
-        expect(Qig.qig(array_pyramid, [], [], [], [], 0)).to eq([                   ])
+        expect(Qig.qig(array_pyramid, [], [], [], [], 0)).to eq([                   ])     # rubocop:disable Layout/SpaceInsideArrayLiteralBrackets
 
         pyramid = [0, [1, [2, [3]]]]
-        expect(Qig.qig(pyramid                )).to eq([0, [1, [2, [3]]]])
-        expect(Qig.qig(pyramid, []            )).to eq([0, [1, [2, [3]]]])
-        expect(Qig.qig(pyramid, [], []        )).to eq([0,  1, [2, [3]]] )
-        expect(Qig.qig(pyramid, [], [], []    )).to eq([0,  1,  2, [3]]  )
-        expect(Qig.qig(pyramid, [], [], [], [])).to eq([0,  1,  2,  3]   )
-        expect(Qig.qig(pyramid, [], [], [], [])).to eq([0,  1,  2,  3]   )
+        expect(Qig.qig(pyramid                )).to eq([0, [1, [2, [3]]]])      # rubocop:disable Layout/SpaceInsideParens
+        expect(Qig.qig(pyramid, []            )).to eq([0, [1, [2, [3]]]])      # rubocop:disable Layout/SpaceInsideParens
+        expect(Qig.qig(pyramid, [], []        )).to eq([0,  1, [2, [3]]] )      # rubocop:disable Layout/SpaceInsideParens
+        expect(Qig.qig(pyramid, [], [], []    )).to eq([0,  1,  2, [3]]  )      # rubocop:disable Layout/SpaceInsideParens
+        expect(Qig.qig(pyramid, [], [], [], [])).to eq([0,  1,  2,  3]   )      # rubocop:disable Layout/SpaceInsideParens
+        expect(Qig.qig(pyramid, [], [], [], [])).to eq([0,  1,  2,  3]   )      # rubocop:disable Layout/SpaceInsideParens
 
         eight = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]
         expect(Qig.qig(eight, 0)).to          eq([[1, 2], [3, 4]])
@@ -108,7 +108,7 @@ RSpec.describe Qig, :aggregate_failures do
     end
 
     it 'safely navigates top-level nil' do
-      expect(Qig.qig(nil, 1, 2 ,3)).to eq(nil)
+      expect(Qig.qig(nil, 1, 2, 3)).to eq(nil)
       # dig safely navigates embedded nils but is not defined on nil for top-level nav
     end
   end
@@ -159,9 +159,9 @@ RSpec.describe Qig, :aggregate_failures do
       # this can produce some counterintuitive results
 
       specify 'first [] looks like a no-op' do
-        expect(Qig.qig([1, 2, 3], [])).to eq([1,2,3])
+        expect(Qig.qig([1, 2, 3], [])).to eq([1, 2, 3])
       end
-      
+
       specify 'multi-navigation always requires a leading []'
 
       # but this provides low-cost flexibility, and provides the caller explicit control.
