@@ -5,8 +5,8 @@ qig is dig extended with jq's "value iterator" `[]` operator.
 ## Features
 
 - [x] qig into arrays and hashes
-- [ ] qig into structs
-- [ ] qig into OpenStructs
+- [x] qig into structs
+- [x] qig into OpenStructs
 - [ ] qig into CSV::Tables
 - [ ] qig into CSV::Rows
 - [x] value iteration over arrays

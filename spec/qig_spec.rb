@@ -22,6 +22,16 @@ RSpec.describe Qig, :aggregate_failures do
       expect(Qig.qig([1, 2], 2, 0)).to eq(nil)
       expect(Qig.qig([[1, 2], [3, 4]], 0)).to eq([1, 2])
     end
+
+    it 'handles simple struct cases' do
+      stub_const('TestStruct', Struct.new('TestStruct', :a, :b))
+      expect(Qig.qig(TestStruct.new(1, 2), :a)).to eq 1
+    end
+
+    it 'handles simple OpenStruct cases' do
+      require 'ostruct'
+      expect(Qig.qig(OpenStruct.new(a: 1, b: 2), :a)).to eq 1
+    end
   end
 
   context 'it behaves like jq' do
