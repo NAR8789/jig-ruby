@@ -1,5 +1,8 @@
 # Qig
 
+[![Gem Version](https://badge.fury.io/rb/qig.svg)](https://badge.fury.io/rb/qig)
+[![CircleCI](https://circleci.com/gh/NAR8789/qig-ruby/tree/main.svg?style=shield)](https://circleci.com/gh/NAR8789/qig-ruby/tree/main)
+
 qig is dig extended with jq's "value iterator" `[]` operator.
 
 ## Features
