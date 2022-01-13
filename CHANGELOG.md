@@ -1,3 +1,9 @@
+# 0.2.0 (Upcoming)
+
+## Features
+
+- Value iteration(`[]` over hashes)
+
 # 0.1.3 (January 13, 2022)
 
 ## Documentation

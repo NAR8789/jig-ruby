@@ -35,6 +35,13 @@ RSpec.describe Qig, :aggregate_failures do
       it 'behaves like flatten, preserving stray atoms (jq raises an error in this case)'
       # we do this because it's more in the spirit of dig's tendency towards "safe" navigation
 
+      it 'unboxes hashes into their values' do
+        expect(Qig.qig({ a: 1, b: 2 }, [])).to eq [1, 2]
+        expect(Qig.qig({ a: 1, b: 2 }, [], [])).to eq [1, 2]
+        expect(Qig.qig([{ a: 1, b: 2 }], [], [])).to eq [1, 2]
+        expect(Qig.qig([{ a: 1, b: 2 }], [], [], [])).to eq [1, 2]
+      end
+
       # TODO: wordsmith the rest of the following specs
 
       it 'treats the first level of [] as array descent' do

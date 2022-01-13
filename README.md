@@ -10,7 +10,7 @@ qig is dig extended with jq's "value iterator" `[]` operator.
 - [ ] qig into CSV::Tables
 - [ ] qig into CSV::Rows
 - [x] value iteration over arrays
-- [ ] value iteration over hashes
+- [x] value iteration over hashes
 - [ ] option to monkey patch this for more dig-like `subject.qig(*path)` syntax
 
 ## Installation
