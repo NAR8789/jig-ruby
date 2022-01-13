@@ -32,6 +32,54 @@ RSpec.describe Qig, :aggregate_failures do
 
     # in particular then, qig handles []: the unboxing operator
     describe '[]' do
+      it 'behaves like flatten, preserving stray atoms (jq raises an error in this case)'
+      # we do this because it's more in the spirit of dig's tendency towards "safe" navigation
+
+      # TODO: wordsmith the rest of the following specs
+
+      it 'treats the first level of [] as array descent' do
+        expect(Qig.qig([[1, 2], [3, 4]], [])).to eq([[1, 2], [3, 4]])
+        expect(Qig.qig([[1, 2], [3, 4]], [], 0)).to eq([1, 3])
+        expect(Qig.qig([[1, 2], [3, 4]], [], 1)).to eq([2, 4])
+        expect(Qig.qig([[1, 2], [3, 4]], [], 2)).to eq([nil, nil])
+        expect(Qig.qig([[1, 2], [3, 4]], [], 2, 0)).to eq([nil, nil])
+      end
+
+      it 'treats further levels of [] as value iteration' do
+        expect(Qig.qig([1, [2], [3, [4]]], [], [])).to eq([1, 2, 3, [4]])
+        expect(Qig.qig([1, [2], [3, [4]]], [], [], [])).to eq([1, 2, 3, 4])
+      end
+
+      it 'WIP experimental examples' do
+        array_pyramid = [[[[], []], []], []]
+        expect(Qig.qig(array_pyramid)).to                         eq([[[[], []], []], []])
+        expect(Qig.qig(array_pyramid, [])).to                     eq([[[[], []], []], []])
+        expect(Qig.qig(array_pyramid, [], [])).to                 eq( [[[], []], []])
+        expect(Qig.qig(array_pyramid, [], [], [])).to             eq(  [[], []])
+        expect(Qig.qig(array_pyramid, [], [], [], [])).to         eq(   [])
+        expect(Qig.qig(array_pyramid, [], [], [], [], [])).to     eq(   [])
+        expect(Qig.qig(array_pyramid, [], [], [], [], [], [])).to eq(   [])
+
+        expect(Qig.qig(array_pyramid, 0)).to                 eq( [[[], []], []])
+        expect(Qig.qig(array_pyramid, [], 0)).to             eq([[[], []],       nil])
+        expect(Qig.qig(array_pyramid, [], [], 0)).to         eq([[],             nil])
+        expect(Qig.qig(array_pyramid, [], [], [], 0)).to     eq([nil,            nil])
+        expect(Qig.qig(array_pyramid, [], [], [], [], 0)).to eq([                   ])
+
+        pyramid = [0, [1, [2, [3]]]]
+        expect(Qig.qig(pyramid                )).to eq([0, [1, [2, [3]]]])
+        expect(Qig.qig(pyramid, []            )).to eq([0, [1, [2, [3]]]])
+        expect(Qig.qig(pyramid, [], []        )).to eq([0,  1, [2, [3]]] )
+        expect(Qig.qig(pyramid, [], [], []    )).to eq([0,  1,  2, [3]]  )
+        expect(Qig.qig(pyramid, [], [], [], [])).to eq([0,  1,  2,  3]   )
+        expect(Qig.qig(pyramid, [], [], [], [])).to eq([0,  1,  2,  3]   )
+
+        eight = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]
+        expect(Qig.qig(eight, 0)).to          eq([[1, 2], [3, 4]])
+        expect(Qig.qig(eight, [], 0)).to      eq([[1, 2], [5, 6]])
+        expect(Qig.qig(eight, [], [], 0)).to  eq([1, 3, 5, 7])
+        expect(Qig.qig(eight, [], [], [])).to eq([1, 2, 3, 4, 5, 6, 7, 8])
+      end
     end
   end
 
@@ -80,7 +128,7 @@ RSpec.describe Qig, :aggregate_failures do
     #
     # Qig follows simple rules to determine context:
     # - qig always starts in unit-context (always start off assuming the input is an atomic subject)
-    # - qig switches to collection-context upon [] (read: "unboxing" or "splatting").
+    # - qig switches to collection-context upon [] (read: "value iteration").
     #
     # This strives for good balance between flexibility and usability:
     # - unit-context retains the intuitive feel of dig-like usage
@@ -93,18 +141,31 @@ RSpec.describe Qig, :aggregate_failures do
     context 'qig switches to collection context upon first invocation of []' do
       # this can produce some counterintuitive results
 
-      specify 'first [] looks like a no-op'
-      # I unboxed the input, but I had to rebox it to give you the results
-      # Rather than just any old box, I reused the box it came in. (enclosing collection matches
-      # the original)
+      specify 'first [] looks like a no-op' do
+        expect(Qig.qig([1, 2, 3], [])).to eq([1,2,3])
+      end
       
       specify 'multi-navigation always requires a leading []'
 
       # but this provides low-cost flexibility, and provides the caller explicit control.
 
-      specify 'first [] looks like a no-op in isolation, but qig updated its internal state. This is apparent on further navigation'
+      specify 'first [] looks like a no-op in isolation, but qig updated its internal state. This is apparent on further navigation' do
+        # these look the same on the surface...
+
+        expect(Qig.qig([[1, 2], [3, 4]])).to eq([[1, 2], [3, 4]])
+        expect(Qig.qig([[1, 2], [3, 4]], [])).to eq([[1, 2], [3, 4]])
+
+        # but the difference is apparent one step further in
+
+        expect(Qig.qig([[1, 2], [3, 4]], 0)).to eq([1, 2])
+        expect(Qig.qig([[1, 2], [3, 4]], [], 0)).to eq([1, 3])
+      end
 
       specify 'the leading [] explicitly disambiguates multi-navigation vs direct-indexing'
+
+      # additionally...
+
+      specify 'qig will preserve the type of the outer collection if possible'
     end
 
     # TODO: move to Decision Record
@@ -115,104 +176,5 @@ RSpec.describe Qig, :aggregate_failures do
     # a collection. This has two downsides:
     # 1. It makes the dig-like usages less ergonomic (though arguably callers could just switch to dig in those cases)
     # 2. It likely eliminates the ability to dig into top-level arrays, since we'd probably assume these are top-level.
-  end
-
-
-  describe '[]' do
-    it 'treats the first level of [] as array descent' do
-      expect(Qig.qig([[1, 2], [3, 4]], [])).to eq([[1, 2], [3, 4]])
-      expect(Qig.qig([[1, 2], [3, 4]], [], 0)).to eq([1, 3])
-      expect(Qig.qig([[1, 2], [3, 4]], [], 1)).to eq([2, 4])
-      expect(Qig.qig([[1, 2], [3, 4]], [], 2)).to eq([nil, nil])
-      expect(Qig.qig([[1, 2], [3, 4]], [], 2, 0)).to eq([nil, nil])
-    end
-
-    it 'treats further levels of [] as unboxing' do
-      expect(Qig.qig([1, [2], [3, [4]]], [], [])).to eq([1, 2, 3, [4]])
-      expect(Qig.qig([1, [2], [3, [4]]], [], [], [])).to eq([1, 2, 3, 4])
-    end
-
-    # Why the difference here between the first and second appliations of []?
-    #
-    # Conceptually, let's think of [] as always performing unboxing.
-    # The difference in the first case is Qig needs a way to _return_ the unboxed results.
-    #
-    # That is to say, if the first level were just unboxing, we'd get...
-    #
-    #     expect(Qig.qig([1,2,3])).to eq 1,2,3
-    #
-    # Which is nonsensical, because this isn't perl. To return multiple values we need a container.
-    # Qig needs to _rebox_ the results to return them.
-    #
-    # ergo...
-
-    it 'treats the first level of [] as unboxing then reboxing' do
-      expect(Qig.qig([1, 2, 3], [])).to eq([1,2,3])
-    end
-
-    # Which looks like a no-op, but for later steps Qig will be operating one level down
-
-    it 'is meaningfully different from a no-op' do
-      # these look the same on the surface...
-
-      expect(Qig.qig([[1, 2], [3, 4]])).to eq([[1, 2], [3, 4]])
-      expect(Qig.qig([[1, 2], [3, 4]], [])).to eq([[1, 2], [3, 4]])
-
-      # but the difference is apparent one step further in
-
-      expect(Qig.qig([[1, 2], [3, 4]], 0)).to eq([1, 2])
-      expect(Qig.qig([[1, 2], [3, 4]], [], 0)).to eq([1, 3])
-    end
-
-    # More abstractly, this comes down to bridging a fundamental divide between `dig` and `jq`
-
-    it 'experimental examples' do
-      array_pyramid = [[[[], []], []], []]
-      expect(Qig.qig(array_pyramid)).to                         eq([[[[], []], []], []])
-      expect(Qig.qig(array_pyramid, [])).to                     eq([[[[], []], []], []])
-      expect(Qig.qig(array_pyramid, [], [])).to                 eq( [[[], []], []])
-      expect(Qig.qig(array_pyramid, [], [], [])).to             eq(  [[], []])
-      expect(Qig.qig(array_pyramid, [], [], [], [])).to         eq(   [])
-      expect(Qig.qig(array_pyramid, [], [], [], [], [])).to     eq(   [])
-      expect(Qig.qig(array_pyramid, [], [], [], [], [], [])).to eq(   [])
-
-      expect(Qig.qig(array_pyramid, 0)).to                 eq( [[[], []], []])
-      expect(Qig.qig(array_pyramid, [], 0)).to             eq([[[], []],       nil])
-      expect(Qig.qig(array_pyramid, [], [], 0)).to         eq([[],             nil])
-      expect(Qig.qig(array_pyramid, [], [], [], 0)).to     eq([nil,            nil])
-      expect(Qig.qig(array_pyramid, [], [], [], [], 0)).to eq([                   ])
-
-      pyramid = [0, [1, [2, [3]]]]
-      expect(Qig.qig(pyramid                )).to eq([0, [1, [2, [3]]]])
-      expect(Qig.qig(pyramid, []            )).to eq([0, [1, [2, [3]]]])
-      expect(Qig.qig(pyramid, [], []        )).to eq([0,  1, [2, [3]]] )
-      expect(Qig.qig(pyramid, [], [], []    )).to eq([0,  1,  2, [3]]  )
-      expect(Qig.qig(pyramid, [], [], [], [])).to eq([0,  1,  2,  3]   )
-      expect(Qig.qig(pyramid, [], [], [], [])).to eq([0,  1,  2,  3]   )
-
-      eight = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]
-      expect(Qig.qig(eight, 0)).to          eq([[1, 2], [3, 4]])
-      expect(Qig.qig(eight, [], 0)).to      eq([[1, 2], [5, 6]])
-      expect(Qig.qig(eight, [], [], 0)).to  eq([1, 3, 5, 7])
-      expect(Qig.qig(eight, [], [], [])).to eq([1, 2, 3, 4, 5, 6, 7, 8])
-    end
-
-
-    # [] is conceptually simple: it unboxes collections and dumps their contents into jq's stream.
-    # It's very simlar to a flatten, except jq will raise an exception if we try to unbox an atom.
-    # TODO: look at how jq formally defines this and rewrite for consistency.
-    #
-    # In qig, [] _is exactly_ flatten: it unboxes top-level collections, and preserves atoms
-    #
-    # But, the prior tests show qig treating its input as a single atom rather than a stream.
-    # If we're following jq semantics, then given an array shouldn't Qig try to unbox the top-level array?
-    # That is to say...
-    #
-    # Qig.qig([[1, 2], [3, 4]], [])) => [1, 2], [3, 4] # what would this even mean? Are we suddenly writing perl?
-    #
-    # Qig solves this as follows:
-    # - initial input is treated as a unit (or a stream of one), and it tries to return a unit
-    # - if we try to _unbox_ the initial unit, Qig drops down a level, treating that top-level collection as the stream.
-
   end
 end
