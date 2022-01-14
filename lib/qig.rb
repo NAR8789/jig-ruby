@@ -14,6 +14,16 @@ module Qig
       unit_qig(subject, *path)
     end
 
+    # "values" as in jq's "value iterator".
+    #
+    # Coerce to array by taking the .values. Intuitively, get all possible values of `arrayish[x]`.
+    #
+    # @param arrayish [Array, Hash, #values, Object] array or hash or other to coerce to values
+    # @return [Array, Array, Array, Object] array of coerced values
+    def values(arrayish)
+      arrayish.respond_to?(:values) ? arrayish.values : arrayish
+    end
+
     private
 
     def unit_qig(subject, *path)
@@ -22,8 +32,7 @@ module Qig
       when nil
         subject
       when []
-        subject = subject&.values if subject.is_a? Hash
-        collection_qig(subject, *rest)
+        collection_qig(values(subject), *rest)
       else
         unit_qig(subject&.[](head), *rest)
       end
@@ -35,7 +44,7 @@ module Qig
       when nil
         subjects
       when []
-        collection_qig(subjects.map { |s| s.is_a?(Hash) ? s.values : s }.flatten(1), *rest)
+        collection_qig(subjects.map(&method(:values)).flatten(1), *rest)
         # not sure this is quite jq-compliant... [] refuses to iterate over atoms, but flatten will just preserve them.
         # maybe more in the spirit of `dig` though?
       else
