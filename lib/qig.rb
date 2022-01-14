@@ -2,9 +2,15 @@
 
 require_relative 'qig/version'
 
+# Combining the powers of `dig` and `jq`.
+# Qig is dig extended with jq's value iteration `[]` operator.
 module Qig
-  def self.qig(*args)
-    unit_qig(*args)
+  # @param subject [Array, Hash, #[]] `subject` to be qug into.
+  # @param path [Array<String, Symbol, Array, Object>] retrieval path to apply to `subject`
+  #
+  # @return [Object, Array<Object>] the value(s) of `subject` located at `path`
+  def self.qig(subject, *path)
+    unit_qig(subject, *path)
   end
 
   def self.unit_qig(subject, *path)
