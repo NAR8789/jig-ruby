@@ -48,7 +48,7 @@ module Qig
         # not sure this is quite jq-compliant... [] refuses to iterate over atoms, but flatten will just preserve them.
         # maybe more in the spirit of `dig` though?
       else
-        collection_qig(subjects.map { |e| e.nil? ? e : e[head] }, *rest)
+        collection_qig(subjects.map { |e| e&.[](head) }, *rest)
       end
     end
   end
