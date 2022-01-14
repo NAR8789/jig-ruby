@@ -6,6 +6,7 @@
 
 ## Documentation
 
+- Initial yard documentation on method and module
 - Document and spec that we can qig into Structs and OpenStructs
 
 # 0.1.3 (January 13, 2022)

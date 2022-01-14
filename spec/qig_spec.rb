@@ -30,7 +30,7 @@ RSpec.describe Qig, :aggregate_failures do
 
     it 'handles simple OpenStruct cases' do
       require 'ostruct'
-      expect(Qig.qig(OpenStruct.new(a: 1, b: 2), :a)).to eq 1
+      expect(Qig.qig(OpenStruct.new(a: 1, b: 2), :a)).to eq 1 # rubocop:disable Style/OpenStructUse
     end
   end
 
@@ -166,7 +166,7 @@ RSpec.describe Qig, :aggregate_failures do
 
       # but this provides low-cost flexibility, and provides the caller explicit control.
 
-      specify 'first [] looks like a no-op in isolation, but qig updated its internal state. This is apparent on further navigation' do
+      specify 'first [] looks like a no-op in isolation, but qig updated its internal state' do
         # these look the same on the surface...
 
         expect(Qig.qig([[1, 2], [3, 4]])).to eq([[1, 2], [3, 4]])
