@@ -45,8 +45,6 @@ module Qig
         subjects
       when []
         collection_qig(subjects.map(&method(:values)).flatten(1), *rest)
-        # not sure this is quite jq-compliant... [] refuses to iterate over atoms, but flatten will just preserve them.
-        # maybe more in the spirit of `dig` though?
       else
         collection_qig(subjects.map { |e| e&.[](head) }, *rest)
       end
