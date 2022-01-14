@@ -8,23 +8,19 @@ module Qig
   end
 
   def self.unit_qig(subject, *path)
-    return subject if subject.nil?
-
     head, *rest = path
     case head
     when nil
       subject
     when []
-      subject = subject.values if subject.is_a? Hash
+      subject = subject&.values if subject.is_a? Hash
       collection_qig(subject, *rest)
     else
-      unit_qig(subject[head], *rest)
+      unit_qig(subject&.[](head), *rest)
     end
   end
 
   def self.collection_qig(subjects, *path)
-    return subjects if subjects.empty?
-
     head, *rest = path
     case head
     when nil
