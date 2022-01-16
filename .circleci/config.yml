@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  build:
+  ruby310: &default
     docker:
       - image: ruby:3.1.0
     steps:
@@ -20,3 +20,29 @@ jobs:
             bundle exec rubocop --format progress --format junit --out spec/reports/rubocop.xml
       - store_test_results:
           path: spec/reports/
+  ruby275:
+    <<: *default
+    docker:
+      - image: ruby:2.7.5
+  ruby270:
+    <<: *default
+    docker:
+      - image: ruby:2.7.0
+  ruby269:
+    <<: *default
+    docker:
+      - image: ruby:2.6.9
+  ruby260:
+    <<: *default
+    docker:
+      - image: ruby:2.6.0
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - ruby310
+      - ruby275
+      - ruby270
+      - ruby269
+      - ruby260
