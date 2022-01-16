@@ -20,6 +20,14 @@ jobs:
             bundle exec rubocop --format progress --format junit --out spec/reports/rubocop.xml
       - store_test_results:
           path: spec/reports/
+  ruby303:
+    <<: *default
+    docker:
+      - image: ruby:3.0.3
+  ruby300:
+    <<: *default
+    docker:
+      - image: ruby:3.0.0
   ruby275:
     <<: *default
     docker:
@@ -42,6 +50,8 @@ workflows:
   test:
     jobs:
       - ruby310
+      - ruby303
+      - ruby300
       - ruby275
       - ruby270
       - ruby269
