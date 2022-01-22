@@ -60,8 +60,8 @@ RSpec.describe Qig, :aggregate_failures do
         end
 
         it 'handles simple struct cases' do
-          stub_const('TestStruct', Struct.new('TestStruct', :a, :b))
-          expect(Qig.qig(TestStruct.new(1, 2), :a)).to eq 1
+          test_struct = Struct.new('TestStruct', :a, :b)
+          expect(Qig.qig(test_struct.new(1, 2), :a)).to eq 1
         end
 
         it 'handles simple OpenStruct cases' do
