@@ -17,6 +17,14 @@ RSpec.describe Qig, :aggregate_failures do
         expect(Qig.qig([1, 2, 3], [[:filter, [], :even?]])).to eq([2])
         expect(Qig.qig([[1, 2, 3], [4, 5]], [], [[:filter, [], :even?]])).to eq([[2], [4]])
       end
+
+      it 'can be used as a bizarro quoting syntax' do
+        expect(Qig.qig({ [] => :hello }, [])).to eq([:hello]) # but how to lookup by []?
+        expect(Qig.qig({ [] => :hello }, [[:[], [[]]]])).to eq(:hello) # but how to lookup by []?
+
+        # well, this works... but that is a horrifying number of brackets. Going to want first-class syntax for quoting
+        # after all
+      end
     end
 
     describe 'top-level collection method invocation' do
