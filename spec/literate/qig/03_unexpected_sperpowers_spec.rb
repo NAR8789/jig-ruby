@@ -20,13 +20,13 @@ RSpec.describe Qig, :aggregate_failures do
     describe 'String#[]' do
       it 'indexes into the string' do
         expect('abcdefghijklmnopqrstuvwxyz'[12]).to eq('m')
-        expect('the quick brown fox'[4...9]).to eq('quick') unless RUBY_VERSION.start_with?('2.6.')
+        expect('the quick brown fox'[4...9]).to eq('quick')
       end
 
       # could be potentially useful
       specify 'qig can qig into strings' do
         expect(Qig.qig(%w[abcd 1234 xyzw], [], 1)).to eq(%w[b 2 y])
-        expect(Qig.qig(%w[abcd 1234 xyzw], [], 1..2)).to eq(%w[bc 23 yz]) unless RUBY_VERSION.start_with?('2.6.')
+        expect(Qig.qig(%w[abcd 1234 xyzw], [], 1..2)).to eq(%w[bc 23 yz])
       end
 
       # or could be unexpected
@@ -58,15 +58,13 @@ RSpec.describe Qig, :aggregate_failures do
 
     describe 'Integer#[]' do
       it 'indexes into the binary representation of a number' do
-        unless RUBY_VERSION.start_with?('2.6.')
-          expect(0xdcba[0...4]).to   eq(0xa)
-          expect(0xdcba[4...8]).to   eq(0xb)
-          expect(0xdcba[8...12]).to  eq(0xc)
-          expect(0xdcba[12...16]).to eq(0xd)
-          expect(0xdcba[16...20]).to eq(0x0)
-          expect(0xdcba[4...12]).to  eq(0xcb)
-          expect(0xdcba[0...8]).to   eq(0xba)
-        end
+        expect(0xdcba[0...4]).to   eq(0xa)
+        expect(0xdcba[4...8]).to   eq(0xb)
+        expect(0xdcba[8...12]).to  eq(0xc)
+        expect(0xdcba[12...16]).to eq(0xd)
+        expect(0xdcba[16...20]).to eq(0x0)
+        expect(0xdcba[4...12]).to  eq(0xcb)
+        expect(0xdcba[0...8]).to   eq(0xba)
 
         expect(6[0]).to eq(0)
         expect(6[1]).to eq(1)
@@ -75,10 +73,8 @@ RSpec.describe Qig, :aggregate_failures do
       end
 
       specify 'qig inherits this power, for better or for worse' do
-        unless RUBY_VERSION.start_with?('2.6')
-          expect(Qig.qig([0xabcd, 0x1234], [], 8...16)).to eq([0xab, 0x12])
-          expect(Qig.qig([0xabcd, 0x1234, 'the quick brown fox'], [], 8...16)).to eq([0xab, 0x12, 'k brown '])
-        end
+        expect(Qig.qig([0xabcd, 0x1234], [], 8...16)).to eq([0xab, 0x12])
+        expect(Qig.qig([0xabcd, 0x1234, 'the quick brown fox'], [], 8...16)).to eq([0xab, 0x12, 'k brown '])
 
         expect(Qig.qig([6, 5], [], 1)).to eq([1, 0])
       end

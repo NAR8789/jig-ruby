@@ -1,4 +1,9 @@
-# 0.2.1 (Upcoming)
+# 0.3.0 (Upcoming)
+
+## BREAKING CHANGES
+
+- drop ruby 2.6 support, because Ruby 2.6 will be EOL in 2 months, and Ruby 2.7 pattern matching syntax makes
+  command parsing cases *much* easier to maintain, keeping the main switching logic a single-level `case`
 
 ## Features
 

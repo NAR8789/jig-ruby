@@ -29,20 +29,14 @@ module Qig
     def unit_qig(subject, *path)
       head, *rest = path
       case head
-      when nil
+      in nil
         subject
-      when []
+      in []
         collection_qig(values(subject), *rest)
-      when Array
-        case head[0]
-        when Array
-          (method, *args), block = head
-          if block
-            unit_qig(subject.public_send(method, *args, &block))
-          else
-            unit_qig(subject.public_send(method, *args), *rest)
-          end
-        end
+      in [[method, *args], block]
+        unit_qig(subject.public_send(method, *args, &block), *rest)
+      in [[method, *args]]
+        unit_qig(subject.public_send(method, *args), *rest)
       else
         unit_qig(step(subject, head), *rest)
       end
@@ -51,20 +45,14 @@ module Qig
     def collection_qig(subjects, *path)
       head, *rest = path
       case head
-      when nil
+      in nil
         subjects
-      when []
+      in []
         collection_qig(subjects.map(&method(:values)).flatten(1), *rest)
-      when Array
-        case head[0]
-        when Array
-          (method, *args), block = head
-          if block
-            collection_qig(subjects.map { |s| s.public_send(method, *args, &block) }, *rest)
-          else
-            collection_qig(subjects.map { |s| s.public_send(method, *args) }, *rest)
-          end
-        end
+      in [[method, *args], block]
+        collection_qig(subjects.map { |s| s.public_send(method, *args, &block) }, *rest)
+      in [[method, *args]]
+        collection_qig(subjects.map { |s| s.public_send(method, *args) }, *rest)
       else
         collection_qig(subjects.map { |s| step(s, head) }, *rest)
       end
