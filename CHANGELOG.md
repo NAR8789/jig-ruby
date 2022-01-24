@@ -1,3 +1,10 @@
+# 0.2.1 (Upcoming)
+
+## Documentation
+
+- Reorganize and explain literate specs
+- Specs for dig conformance
+
 # 0.2.0 (January 14, 2022)
 
 ## Features
