@@ -33,6 +33,13 @@ module Qig
         subject
       when []
         collection_qig(values(subject), *rest)
+      when Array
+        case head
+        in [[method, *args], block]
+          unit_qig(subject.public_send(method, *args, &block))
+        in [method, *args]
+          unit_qig(subject.public_send(method, *args), *rest)
+        end
       else
         unit_qig(step(subject, head), *rest)
       end
@@ -45,6 +52,13 @@ module Qig
         subjects
       when []
         collection_qig(subjects.map(&method(:values)).flatten(1), *rest)
+      when Array
+        case head
+        in [[method, *args], block]
+          collection_qig(subjects.map { |s| s.public_send(method, *args, &block) }, *rest)
+        in [method, *args]
+          collection_qig(subjects.map { |s| s.public_send(method, *args) }, *rest)
+        end
       else
         collection_qig(subjects.map { |s| step(s, head) }, *rest)
       end
