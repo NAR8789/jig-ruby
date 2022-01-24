@@ -7,13 +7,16 @@ qig is dig extended with jq's "value iterator" `[]` operator.
 
 ## Features
 
-- [x] qig into arrays and hashes
-- [x] qig into structs
-- [x] qig into OpenStructs
-- [ ] qig into CSV::Tables
-- [ ] qig into CSV::Rows
-- [x] value iteration over arrays
-- [x] value iteration over hashes
+- [x] compatible with dig
+  - [x] qig into arrays and hashes
+  - [x] qig into structs
+  - [x] qig into OpenStructs
+  - [x] qig into CSV::Tables
+  - [x] qig into CSV::Rows
+- [x] nifty jq extensions
+  - [x] value iteration over arrays
+  - [x] value iteration over hashes
+- [x] invoke ruby methods during inside the filter chain
 - [ ] option to monkey patch this for more dig-like `subject.qig(*path)` syntax
 
 ## Installation
