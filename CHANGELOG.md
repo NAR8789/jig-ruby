@@ -5,6 +5,10 @@
 - Reorganize and explain literate specs
 - Specs for dig conformance
 
+## Fixes
+
+- On invalid access to struct, return nil, for better conformance to Struct#dig. Previously this raised error.
+
 # 0.2.0 (January 14, 2022)
 
 ## Features

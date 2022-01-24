@@ -34,7 +34,7 @@ module Qig
       when []
         collection_qig(values(subject), *rest)
       else
-        unit_qig(subject&.[](head), *rest)
+        unit_qig(step(subject, head), *rest)
       end
     end
 
@@ -46,8 +46,16 @@ module Qig
       when []
         collection_qig(subjects.map(&method(:values)).flatten(1), *rest)
       else
-        collection_qig(subjects.map { |e| e&.[](head) }, *rest)
+        collection_qig(subjects.map { |s| step(s, head) }, *rest)
       end
+    end
+
+    def step(subject, key)
+      subject&.[](key)
+    rescue NameError, IndexError
+      # Struct's [] is strict and raises on missing key.
+      # TODO: more efficient / prettier way of doing this. How does struct itself implement dig?
+      nil
     end
   end
 end
