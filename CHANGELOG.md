@@ -1,4 +1,4 @@
-# 0.3.0 (Upcoming)
+# 0.3.0 (January 24, 2022)
 
 ## BREAKING CHANGES
 
