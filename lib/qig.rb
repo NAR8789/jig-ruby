@@ -34,12 +34,14 @@ module Qig
       when []
         collection_qig(values(subject), *rest)
       when Array
-        if head.size == 2 && head[0].is_a?(Array)
+        case head[0]
+        when Array
           (method, *args), block = head
-          unit_qig(subject.public_send(method, *args, &block))
-        else
-          method, *args = head
-          unit_qig(subject.public_send(method, *args), *rest)
+          if block
+            unit_qig(subject.public_send(method, *args, &block))
+          else
+            unit_qig(subject.public_send(method, *args), *rest)
+          end
         end
       else
         unit_qig(step(subject, head), *rest)
@@ -54,12 +56,14 @@ module Qig
       when []
         collection_qig(subjects.map(&method(:values)).flatten(1), *rest)
       when Array
-        if head.size == 2 && head[0].is_a?(Array)
+        case head[0]
+        when Array
           (method, *args), block = head
-          collection_qig(subjects.map { |s| s.public_send(method, *args, &block) }, *rest)
-        else
-          method, *args = head
-          collection_qig(subjects.map { |s| s.public_send(method, *args) }, *rest)
+          if block
+            collection_qig(subjects.map { |s| s.public_send(method, *args, &block) }, *rest)
+          else
+            collection_qig(subjects.map { |s| s.public_send(method, *args) }, *rest)
+          end
         end
       else
         collection_qig(subjects.map { |s| step(s, head) }, *rest)
