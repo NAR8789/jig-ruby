@@ -36,14 +36,6 @@ jobs:
     <<: *default
     docker:
       - image: ruby:2.7.0
-  ruby269:
-    <<: *default
-    docker:
-      - image: ruby:2.6.9
-  ruby260:
-    <<: *default
-    docker:
-      - image: ruby:2.6.0
 
 workflows:
   version: 2
@@ -54,5 +46,3 @@ workflows:
       - ruby300
       - ruby275
       - ruby270
-      - ruby269
-      - ruby260

@@ -26,25 +26,45 @@ module Qig
 
     private
 
-    def unit_qig(subject, *path)
+    def unit_qig(subject, *path) # rubocop:disable Metrics/MethodLength
       head, *rest = path
       case head
-      when nil
+      in nil
         subject
-      when []
+      in []
         collection_qig(values(subject), *rest)
+      in [[method, [*args], block]]
+        unit_qig(subject.public_send(method, *args, &block), *rest)
+      in [[method, [*args]]]
+        unit_qig(subject.public_send(method, *args), *rest)
+      in [[method]]
+        unit_qig(subject.public_send(method), *rest)
+      in [method, *]
+        raise ArgumentError, 'stream method invocation not applicable in unit context'
       else
         unit_qig(step(subject, head), *rest)
       end
     end
 
-    def collection_qig(subjects, *path)
+    def collection_qig(subjects, *path) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       head, *rest = path
       case head
-      when nil
+      in nil
         subjects
-      when []
+      in []
         collection_qig(subjects.map(&method(:values)).flatten(1), *rest)
+      in [[method, [*args], block]]
+        collection_qig(subjects.map { |s| s.public_send(method, *args, &block) }, *rest)
+      in [[method, [*args]]]
+        collection_qig(subjects.map { |s| s.public_send(method, *args) }, *rest)
+      in [[method]]
+        collection_qig(subjects.map { |s| s.public_send(method) }, *rest)
+      in [method, [*args], block]
+        collection_qig(subjects.public_send(method, *args, &block), *rest)
+      in [method, [*args]]
+        collection_qig(subjects.public_send(method, *args), *rest)
+      in [method]
+        collection_qig(subjects.public_send(method), *rest)
       else
         collection_qig(subjects.map { |s| step(s, head) }, *rest)
       end
