@@ -26,7 +26,7 @@ module Qig
 
     private
 
-    def unit_qig(subject, *path)
+    def unit_qig(subject, *path) # rubocop:disable Metrics/MethodLength
       head, *rest = path
       case head
       in nil
@@ -46,7 +46,7 @@ module Qig
       end
     end
 
-    def collection_qig(subjects, *path)
+    def collection_qig(subjects, *path) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       head, *rest = path
       case head
       in nil
