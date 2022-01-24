@@ -1,5 +1,9 @@
 # 0.2.1 (Upcoming)
 
+## Features
+
+- method invocation syntax (e.g. for filtering)
+
 ## Documentation
 
 - Reorganize and explain literate specs
