@@ -33,10 +33,12 @@ module Qig
         subject
       in []
         collection_qig(values(subject), *rest)
-      in [[method, *args], block]
+      in [[method, [*args], block]]
         unit_qig(subject.public_send(method, *args, &block), *rest)
-      in [[method, *args]]
+      in [[method, [*args]]]
         unit_qig(subject.public_send(method, *args), *rest)
+      in [[method]]
+        unit_qig(subject.public_send(method), *rest)
       else
         unit_qig(step(subject, head), *rest)
       end
@@ -49,10 +51,12 @@ module Qig
         subjects
       in []
         collection_qig(subjects.map(&method(:values)).flatten(1), *rest)
-      in [[method, *args], block]
+      in [[method, [*args], block]]
         collection_qig(subjects.map { |s| s.public_send(method, *args, &block) }, *rest)
-      in [[method, *args]]
+      in [[method, [*args]]]
         collection_qig(subjects.map { |s| s.public_send(method, *args) }, *rest)
+      in [[method]]
+        collection_qig(subjects.map { |s| s.public_send(method) }, *rest)
       else
         collection_qig(subjects.map { |s| step(s, head) }, *rest)
       end
