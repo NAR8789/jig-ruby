@@ -24,7 +24,11 @@ RSpec.describe Qig, :aggregate_failures do
       # probably want to be doing this at the top level, e.g. like jq's `select`
 
       it 'can select at top level' do
-        # expect(Qig.qig([1, 2, 3], [], [:select, ->{}]))
+        expect(Qig.qig([1, 2, 3, 4, 5], [], [:select, [], :even?])).to eq([2, 4])
+      end
+
+      it 'stream-method-invocation is only meaningful in collection mode' do
+        expect { Qig.qig([1, 2, 3, 4, 5], [:select, [], :even?]) }.to raise_error(ArgumentError)
       end
     end
   end

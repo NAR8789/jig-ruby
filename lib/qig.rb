@@ -39,6 +39,8 @@ module Qig
         unit_qig(subject.public_send(method, *args), *rest)
       in [[method]]
         unit_qig(subject.public_send(method), *rest)
+      in [method, *]
+        raise ArgumentError, 'stream method invocation not applicable in unit context'
       else
         unit_qig(step(subject, head), *rest)
       end
@@ -57,6 +59,12 @@ module Qig
         collection_qig(subjects.map { |s| s.public_send(method, *args) }, *rest)
       in [[method]]
         collection_qig(subjects.map { |s| s.public_send(method) }, *rest)
+      in [method, [*args], block]
+        collection_qig(subjects.public_send(method, *args, &block), *rest)
+      in [method, [*args]]
+        collection_qig(subjects.public_send(method, *args), *rest)
+      in [method]
+        collection_qig(subjects.public_send(method), *rest)
       else
         collection_qig(subjects.map { |s| step(s, head) }, *rest)
       end
