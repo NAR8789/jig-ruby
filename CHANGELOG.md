@@ -9,6 +9,7 @@
 
 - method invocation syntax (e.g. for filtering)
 - quoting syntax to use operators as literal keys
+- reboxing operator or value collection operator, inverse of the value iteration operator
 
 ## Documentation
 

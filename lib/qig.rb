@@ -33,6 +33,8 @@ module Qig
         subject
       in []
         collection_qig(values(subject), *rest)
+      in [[]]
+        unit_qig([subject], *rest)
       in ['', key]
         unit_qig(step(subject, key), *rest)
       in [[method, [*args], block]]
@@ -55,6 +57,8 @@ module Qig
         subjects
       in []
         collection_qig(subjects.map(&method(:values)).flatten(1), *rest)
+      in [[]]
+        unit_qig(subjects, *rest)
       in ['', key]
         collection_qig(subjects.map { |s| step(s, key) }, *rest)
       in [[method, [*args], block]]
