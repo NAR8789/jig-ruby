@@ -2,6 +2,9 @@
 
 RSpec.describe Qig, :aggregate_failures do
   describe 'method invocation' do
+    # > Any sufficiently complicated C or Fortran program contains an ad hoc, informally-specified, bug-ridden,
+    # > slow implementation of half of Common Lisp. - Philip Greenspun
+
     describe 'subject method invocation' do
       it 'can invoke subject methods via an s-expression like syntax embedded in the qig path' do
         expect(Qig.qig([1, 2, nil, 3], [[:compact, []]])).to eq([1, 2, 3])
@@ -39,5 +42,8 @@ RSpec.describe Qig, :aggregate_failures do
         expect { Qig.qig([1, 2, 3, 4, 5], [:select, [], :even?]) }.to raise_error(ArgumentError)
       end
     end
+
+    # While this is neat, it's probably more ergonomic to provide a monkey-patched version of Qig. That way
+    # method chaining can be done with actual method chaining rather than s-expressions.
   end
 end

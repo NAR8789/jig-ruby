@@ -5,6 +5,26 @@
 
 qig is dig extended with jq's "value iterator" `[]` operator.
 
+## Usage
+
+```ruby
+Qig.qig(subject, *path) # => contents of subject at path
+```
+
+examples:
+```ruby
+# dig-like usage
+Qig.qig({a: { b: { c: 1 } } }, :a, :b, :c) # => 1
+
+# dig-like usage augmented with jq's [] operator
+Qig.qig({a: { b: [ { c: 1 }, { c: 2 } ] } }, :a, :b, [], :c) # => [1, 2]
+
+# after expanding values, collect them back into an array for indexing into with `[[]]`
+Qig.qig({ a: { b: [{ c: 1 }, { c: 2 }] } }, :a, :b, [], :c, [[]], 1) # => 2
+```
+
+More documentation in the [literate specs](spec/literate)
+
 ## Features
 
 - [x] compatible with dig
@@ -35,18 +55,6 @@ And then execute:
 Or install it yourself as:
 
     $ gem install qig
-
-## Usage
-
-```ruby
-Qig.qig(subject, *path) # => contents of subject at path
-```
-
-examples:
-```ruby
-Qig.qig({a: { b: { c: 1 } } }, :a, :b, :c) # => 1
-Qig.qig({a: { b: [ { c: 1 }, { c: 2 } ] } }, :a, :b, [], :c) # => [1, 2]
-```
 
 ## Development
 
