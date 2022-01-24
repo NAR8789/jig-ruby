@@ -49,14 +49,9 @@ RSpec.describe Qig, :aggregate_failures do
           end.to raise_error(TypeError, 'no implicit conversion of Symbol into Integer')
           expect { Qig.qig(1, :bar) }.to raise_error(TypeError, 'no implicit conversion of Symbol into Integer')
 
-          # So wait, this will work if we use a numeric index?
-          expect(Qig.qig(1, 0)).to eq(1)
-          expect(Qig.qig(1, 1)).to eq(0)
-          expect(Qig.qig(0x1234, 4...12).to_s(16)).to eq('23')
-
-          # Turns out [] is defined in a lot more places than I'd expect. Integer#[] indexes into the bitstring
-          expect(0x1234.to_s(2)).to eq('1001000110100')
-          expect(0x1234[4...12].to_s(16)).to eq('23')
+          # It turns out [] on integers behaves like substring on a little-endian bitstring.
+          # See [unexpected_superpowers_spec.rb/Integer#[]](../03_unexpected_superpowers_spec.rb)
+          # for more details.
         end
 
         it 'handles simple struct cases' do
