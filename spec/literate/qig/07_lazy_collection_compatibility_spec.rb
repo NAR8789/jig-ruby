@@ -24,6 +24,8 @@ RSpec.describe Qig, :aggregate_failures do
 
     it 'supports [],[] on lazy collections' do
       expect(Qig.qig([[1, 2], [3, 4]].lazy, [], []).to_a).to eq([1, 2, 3, 4])
+
+      # indeed, this fails if ([] is implemented as flatten(1))[https://github.com/NAR8789/qig-ruby/pull/12/commits/494f7b794abebf1fdddd8f35219381689bc992c2]
     end
 
     # see also: (Qig::Qiggable compatibility with .lazy)[qiggable/01_dotlazy_compatibility_spec.rb]
