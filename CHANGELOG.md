@@ -1,3 +1,9 @@
+# 0.4.0 (Upcoming)
+
+## Features
+
+- `Qig::Qiggable` mixin for adding chainable `.qig` syntax to subject classes.
+
 # 0.3.0 (January 24, 2022)
 
 ## BREAKING CHANGES

@@ -5,6 +5,8 @@ require_relative 'qig/version'
 # Combining the powers of `dig` and `jq`.
 # Qig is dig extended with jq's value iteration `[]` operator.
 module Qig
+  autoload :Qiggable, 'qig/qiggable.rb'
+
   class << self
     # @param subject [Array, Hash, #[]] `subject` to be qug into.
     # @param path [Array<String, Symbol, Array, Object>] retrieval path to apply to `subject`

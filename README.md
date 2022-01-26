@@ -38,7 +38,7 @@ More documentation in the [literate specs](spec/literate)
   - [x] value iteration over hashes
 - [x] invoke ruby methods during inside the filter chain
 - [x] value collect: `[[]]`, inverse of the `[]` operator. Collect streamed values back into an array
-- [ ] option to monkey patch this for more dig-like `subject.qig(*path)` syntax
+- [x] `Qig::Qiggable` mixin for more dig-like `subject.qig(*path)` syntax
 
 ## Installation
 
