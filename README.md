@@ -3,7 +3,7 @@
 [![Gem Version](https://badge.fury.io/rb/qig.svg)](https://badge.fury.io/rb/qig)
 [![CircleCI](https://circleci.com/gh/NAR8789/qig-ruby/tree/main.svg?style=shield)](https://circleci.com/gh/NAR8789/qig-ruby/tree/main)
 
-qig is dig extended with jq's "value iterator" `[]` operator.
+qig is dig extended with jq's "value iterator" `[]` operator and some other goodies.
 
 ## Usage
 
@@ -27,18 +27,13 @@ More documentation in the [literate specs](spec/literate)
 
 ## Features
 
-- [x] compatible with dig
-  - [x] qig into arrays and hashes
-  - [x] qig into structs
-  - [x] qig into OpenStructs
-  - [x] qig into CSV::Tables
-  - [x] qig into CSV::Rows
-- [x] nifty jq extensions
-  - [x] value iteration over arrays
-  - [x] value iteration over hashes
+- [x] compatible with dig (see (dig conformance specs)[spec/literate/qig/02_conformance/dig_conformance_spec.rb])
+- [x] jq-like value iteration (`[]` operator)
 - [x] invoke ruby methods during inside the filter chain
 - [x] value collect: `[[]]`, inverse of the `[]` operator. Collect streamed values back into an array
 - [x] `Qig::Qiggable` mixin for more dig-like `subject.qig(*path)` syntax
+- [ ] extensive literate specs
+  - [ ] works with lazy collections
 
 ## Installation
 
