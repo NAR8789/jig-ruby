@@ -4,6 +4,11 @@
 
 - `Qig::Qiggable` mixin for adding chainable `.qig` syntax to subject classes.
 
+## Fixes
+
+- make unboxing (`[]`) compatible with `Enumerable`. Previously in collection-context this used `flatten(1)`, which
+  `Enumerable` does not support. Now uses `flat_map(&:itself)` instead
+
 # 0.3.0 (January 24, 2022)
 
 ## BREAKING CHANGES
