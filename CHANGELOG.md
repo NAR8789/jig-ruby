@@ -1,4 +1,4 @@
-# 0.4.0 (Upcoming)
+# 0.4.0 (Jan 27, 2022)
 
 ## Features
 
