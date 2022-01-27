@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    qig (0.3.0)
+    qig (0.4.0)
 
 GEM
   remote: https://rubygems.org/

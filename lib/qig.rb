@@ -52,13 +52,13 @@ module Qig
       end
     end
 
-    def collection_qig(subjects, *path) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    def collection_qig(subjects, *path) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
       head, *rest = path
       case head
       in nil
         subjects
       in []
-        collection_qig(subjects.map(&method(:values)).flatten(1), *rest)
+        collection_qig(subjects.map(&method(:values)).flat_map(&:itself), *rest)
       in [[]]
         unit_qig(subjects, *rest)
       in ['', key]
@@ -81,11 +81,25 @@ module Qig
     end
 
     def step(subject, key)
-      subject&.[](key)
+      case subject
+      in Enumerable unless subject.respond_to?(:[])
+        enumerable_step(subject, key)
+      else
+        subject&.[](key)
+      end
     rescue NameError, IndexError
       # Struct's [] is strict and raises on missing key.
       # TODO: more efficient / prettier way of doing this. How does struct itself implement dig?
       nil
+    end
+
+    def enumerable_step(subject, key)
+      case key
+      in Integer
+        subject.drop(key).first
+      in Range
+        subject.drop(key.begin).take(key.count)
+      end
     end
   end
 end
