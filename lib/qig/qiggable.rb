@@ -13,5 +13,12 @@ module Qig
     def qig(*path)
       Qig.qig(self, *path)
     end
+
+    # see Enumerable#lazy
+    #
+    # This version extends the underlying lazy enumerable with Qig::Qiggable
+    def lazy
+      super.extend(Qig::Qiggable)
+    end
   end
 end
