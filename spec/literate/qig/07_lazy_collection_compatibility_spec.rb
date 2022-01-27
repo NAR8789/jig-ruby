@@ -20,6 +20,8 @@ RSpec.describe Qig, :aggregate_failures do
       expect(Enumerable.method_defined?(:[])).to eq(false)
 
       expect(Enumerator::Lazy.method_defined?(:values)).to eq(false)
+
+      # so everything in this document should also be valid for applying qig to Enumerables.
     end
 
     # that probably means if I really want qig to be general, I should use `flat_map` instead of `flatten`
@@ -34,5 +36,31 @@ RSpec.describe Qig, :aggregate_failures do
     # Given an Enumerator::Lazy as top-level collection, qig should now be able to stream like jq does.
 
     it 'can operate in streaming fashion, given a lazy enumerator as top-level collection'
+
+    describe 'stepping' do
+      # of course, indexing into lazy enumerators is obviously unsupported, because they don't support
+      # [] or slice.
+      #
+      # Though... couldn't I implement this with drop?
+
+      it 'can index into lazy enumerators' do
+        expect(Qig.qig((1..).lazy, 10)).to eq(11)
+      end
+
+      it 'can slice into lazy enumerators by range' do
+        expect(Qig.qig((1..).lazy, 10..15).to_a).to eq([11, 12, 13, 14, 15, 16])
+        expect(Qig.qig((1..).lazy, 10...15).to_a).to eq([11, 12, 13, 14, 15])
+        expect(Qig.qig((1..).lazy, 10..8).to_a).to eq([])
+      end
+
+      it 'does NOT support negative indexes' do
+        expect { Qig.qig((1..).lazy, -1) }.to raise_error(ArgumentError, 'attempt to drop negative size')
+        expect { Qig.qig((1..10).lazy, -1) }.to raise_error(ArgumentError, 'attempt to drop negative size')
+
+        expect(Qig.qig((1..10).lazy, 4..-1).to_a).to eq []
+
+        expect { Qig.qig((1..10).lazy, -4..-1) }.to raise_error(ArgumentError, 'attempt to drop negative size')
+      end
+    end
   end
 end

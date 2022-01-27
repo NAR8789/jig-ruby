@@ -81,7 +81,17 @@ module Qig
     end
 
     def step(subject, key)
-      subject&.[](key)
+      case subject
+      in Enumerable unless subject.respond_to?(:[])
+        case key
+        in Integer
+          subject.drop(key).first
+        in Range
+          subject.drop(key.begin).take(key.count)
+        end
+      else
+        subject&.[](key)
+      end
     rescue NameError, IndexError
       # Struct's [] is strict and raises on missing key.
       # TODO: more efficient / prettier way of doing this. How does struct itself implement dig?
