@@ -32,8 +32,8 @@ More documentation in the [literate specs](spec/literate)
 - [x] invoke ruby methods during inside the filter chain
 - [x] value collect: `[[]]`, inverse of the `[]` operator. Collect streamed values back into an array
 - [x] `Qig::Qiggable` mixin for more dig-like `subject.qig(*path)` syntax
-- [ ] extensive literate specs
-  - [ ] works with lazy collections
+- [x] works with lazy collections
+- [x] extensive literate specs
 
 ## Installation
 
