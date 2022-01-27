@@ -2,6 +2,8 @@
 
 RSpec.describe Qig, :aggregate_failures do
   describe 'lazy collection compatibility' do
+    # see also: (Qig::Qiggable compatibility with .lazy)[qiggable/01_dotlazy_compatibility_spec.rb]
+
     specify 'Enumerator::Lazy supports #map and #flat_map but not #flatten or #[]' do
       expect(Enumerator::Lazy.method_defined?(:map)).to eq(true)
       expect(Enumerator::Lazy.method_defined?(:flat_map)).to eq(true)
@@ -28,6 +30,9 @@ RSpec.describe Qig, :aggregate_failures do
       # indeed, this fails if ([] is implemented as flatten(1))[https://github.com/NAR8789/qig-ruby/pull/12/commits/494f7b794abebf1fdddd8f35219381689bc992c2]
     end
 
-    # see also: (Qig::Qiggable compatibility with .lazy)[qiggable/01_dotlazy_compatibility_spec.rb]
+    # I think that's all we really need for full compatibility, since the only other method we need is `map`.
+    # Given an Enumerator::Lazy as top-level collection, qig should now be able to stream like jq does.
+
+    it 'can operate in streaming fashion, given a lazy enumerator as top-level collection'
   end
 end
