@@ -44,22 +44,22 @@ RSpec.describe Qig, :aggregate_failures do
       # Though... couldn't I implement this with drop?
 
       it 'can index into lazy enumerators' do
-        expect(Qig.qig((1..).lazy, 10)).to eq(11)
+        expect(Qig.qig(('a'..).lazy, 10)).to eq('k')
       end
 
       it 'can slice into lazy enumerators by range' do
-        expect(Qig.qig((1..).lazy, 10..15).to_a).to eq([11, 12, 13, 14, 15, 16])
-        expect(Qig.qig((1..).lazy, 10...15).to_a).to eq([11, 12, 13, 14, 15])
-        expect(Qig.qig((1..).lazy, 10..8).to_a).to eq([])
+        expect(Qig.qig(('a'..).lazy, 10..15).to_a).to eq(%w[k l m n o p])
+        expect(Qig.qig(('a'..).lazy, 10...15).to_a).to eq(%w[k l m n o])
+        expect(Qig.qig(('a'..).lazy, 10..8).to_a).to eq([])
       end
 
       it 'does NOT support negative indexes' do
-        expect { Qig.qig((1..).lazy, -1) }.to raise_error(ArgumentError, 'attempt to drop negative size')
-        expect { Qig.qig((1..10).lazy, -1) }.to raise_error(ArgumentError, 'attempt to drop negative size')
+        expect { Qig.qig(('a'..).lazy, -1) }.to raise_error(ArgumentError, 'attempt to drop negative size')
+        expect { Qig.qig(('a'..'z').lazy, -1) }.to raise_error(ArgumentError, 'attempt to drop negative size')
 
-        expect(Qig.qig((1..10).lazy, 4..-1).to_a).to eq []
+        expect(Qig.qig(('a'..'z').lazy, 4..-1).to_a).to eq []
 
-        expect { Qig.qig((1..10).lazy, -4..-1) }.to raise_error(ArgumentError, 'attempt to drop negative size')
+        expect { Qig.qig(('a'..'z').lazy, -4..-1) }.to raise_error(ArgumentError, 'attempt to drop negative size')
       end
     end
   end
